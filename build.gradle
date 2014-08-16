@@ -1,0 +1,64 @@
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.5
+version = '1.0'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Quickstart', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+	console
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.6'
+	compile 'org.codehaus.gpars:gpars:1.2.1'
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+	console 'commons-cli:commons-cli:1.2'
+	console('jline:jline:2.11') {
+		exclude(group: 'junit', module: 'junit')
+	}
+	console 'org.codehaus.groovy:groovy-groovysh:2.3.+'
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+task(console, dependsOn: 'classes') << {
+	def classpath = sourceSets.main.runtimeClasspath + configurations.console
+
+	def command = [
+		'java',
+		'-cp', classpath.collect().join(System.getProperty('path.separator')),
+		'org.codehaus.groovy.tools.shell.Main',
+		'--color'
+	]
+
+	def proc = new ProcessBuilder(command)
+		.redirectOutput(ProcessBuilder.Redirect.INHERIT)
+		.redirectInput(ProcessBuilder.Redirect.INHERIT)
+		.redirectError(ProcessBuilder.Redirect.INHERIT)
+		.start()
+
+	proc.waitFor()
+
+	if (0 != proc.exitValue()) {
+		throw new RuntimeException("console exited with status: ${proc.exitValue()}")
+	}
+}
