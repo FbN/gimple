@@ -26,7 +26,7 @@ class Container extends LinkedHashMap<String, Object> {
 		}
 
 		if ( this.raw.containsKey(id)
-		|| this.protectedValues.contains(id)
+		|| this.protectedValues.contains(super.get(id))
 		|| !(super.get(id) instanceof Closure)
 		) {
 			return super.get(id)
