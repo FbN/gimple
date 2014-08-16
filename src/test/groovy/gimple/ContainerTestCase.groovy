@@ -151,7 +151,89 @@ class ContainerTestCase extends GroovyTestCase {
 		gimple['protected'] = gimple.protect(serviceParameter)
 		assertSame serviceParameter, gimple['protected']
 	}
+	
+	@Test
+	void testPrivateFieldAsParameterValue(){
+		def gimple = new Container()
+		gimple['frozen'] = { 'xxx' }
+		assertSame 'xxx', gimple['frozen']
+	}
+	
+	@Test
+	void testRaw(){
+		def gimple = new Container()
+		def definition = gimple.factory({ 'foo' })
+		gimple['service'] = definition
+		assertSame definition, gimple.service
+	}
+	
+	@Test
+	void testRawHonorsNullValues(){
+		def gimple = new Container()
+		gimple['foo'] = null
+		assertNull gimple.raw('foo')
+	}
+	
+	@Test
+	void testRawValidatesKeyIsPresent(){
+		def gimple = new Container()
+		shouldFail { gimple.raw('foo') }
+	}
+	
+	@Test
+	void testExtend(){
+		
+		def gimple = new Container()
+		
+		def extendCallable = { value, container ->
+				 def service = new Service()
+				 service.value = value
+				 service
+			 }
+		
+		gimple['shared_service'] = { new Service() }
+		gimple['factory_service'] = gimple.factory({ new Service() })
+		gimple.extend('shared_service', extendCallable)
+		
+		def serviceOne = gimple['shared_service']
+		assert serviceOne instanceof Service
 	 
+		def serviceTwo = gimple['shared_service']
+		assert serviceTwo instanceof Service
+		
+		assertSame serviceOne, serviceTwo
+		
+		assertSame serviceOne.value, serviceTwo.value
+		
+		gimple.extend('factory_service', extendCallable)
+		
+		serviceOne = gimple['factory_service']
+		assert serviceOne instanceof Service
+		
+		serviceTwo = gimple['factory_service']
+		assert serviceTwo instanceof Service
+		
+		assertNotSame serviceOne, serviceTwo
+		assertNotSame serviceOne.value, serviceTwo.value
+		
+	 }
+	
+	@Test
+	void testExtendDoesNotLeakWithFactories(){
+		
+		def gimple = new Container()
+		gimple['foo'] = gimple.factory({})
+		gimple['foo'] = gimple.extend('foo', {foo, g-> })
+		
+		gimple.remove('foo')
+		
+		assertTrue gimple.isEmpty()
+		
+		def f = gimple.getClass().getDeclaredField("factories")
+		f.setAccessible(true)
+		assertTrue f.get(gimple).isEmpty()
+		
+	}
 	
 	@Parameter 
 	public def serviceParameter

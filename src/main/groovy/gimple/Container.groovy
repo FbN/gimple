@@ -146,12 +146,14 @@ class Container extends LinkedHashMap<String, Object> {
 	 */
 	 def extend(id, Closure callable){
 		 
-		 assert this.containsKey($id), "Identifier '$id' is not defined."
+		 assert this.containsKey(id), "Identifier '$id' is not defined."
+		 
+		 assert super.get(id) instanceof Closure, "Identifier '$id' does not contain a closure."
 		 	 		 		 
 		 def factory = super.get(id)
 		 
 		 def extended = {c-> 
-			 callable(factory[c], c)
+			 callable(factory(c), c)
 		 } 
 	 
 		 if (this.factories.contains(factory)) {
