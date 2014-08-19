@@ -13,8 +13,7 @@ import org.junit.runners.Parameterized.Parameter
 class ContainerTestCase extends GroovyTestCase {
 	
 	@Test
-	void testInit(){		
-		
+	void testInit(){	
 		assert new Container() == [:]
 		
 	}
@@ -235,8 +234,105 @@ class ContainerTestCase extends GroovyTestCase {
 		
 	}
 	
+	@Test
+	void testExtendValidatesKeyIsPresent(){
+		def gimple = new Container()
+		shouldFail { gimple.extend('foo', {}) }
+	}
+	
+	@Test
+	void testKeys(){
+		def gimple = new Container()
+		gimple['foo'] = 123
+		gimple['bar'] = 123
+		assert ['foo', 'bar'] as Set == gimple.keySet()
+	}
+	
+//	@Test
+//	void settingAnInvokableObjectShouldTreatItAsFactory(){
+//		def gimple = new Container();
+//		$pimple['invokable'] = new Fixtures\Invokable();
+//		$this->assertInstanceOf('Pimple\Tests\Fixtures\Service', $pimple['invokable']);
+//	}
+	
+//	/** @test */
+//	public function settingNonInvokableObjectShouldTreatItAsParameter()
+//	{
+//	$pimple = new Container();
+//	$pimple['non_invokable'] = new Fixtures\NonInvokable();
+//	$this->assertInstanceOf('Pimple\Tests\Fixtures\NonInvokable', $pimple['non_invokable']);
+//	}
+	
+	@Test
+	void testFactoryFailsForInvalidServiceDefinitions(){
+		def gimple = new Container()
+		shouldFail { gimple.factory(badServiceParameter) }
+	}
+	
+	@Test
+	void testProtectFailsForInvalidServiceDefinitions(){
+		def gimple = new Container()
+		shouldFail { gimple.protect(badServiceParameter) }
+	}
+	
+	@Test
+	void testExtendFailsForKeysNotContainingServiceDefinitions(){
+		def gimple = new Container()
+		gimple['foo'] = badServiceParameter
+		shouldFail { gimple.extend('foo', {}) }
+	}
+	
+	@Test
+	void testExtendFailsForInvalidServiceDefinitions(){
+		def gimple = new Container()
+		gimple['foo'] = {}
+		shouldFail {  gimple.extend('foo', badServiceParameter) }
+	}
+	
+	@Test
+	void testDefiningNewServiceAfterFreeze(){
+		def gimple = new Container()
+		gimple['foo'] = { 'foo' }
+		def foo = gimple['foo']
+		gimple['bar'] = { 'bar' }
+		assertSame 'bar', gimple['bar']
+	}
+
+	@Test
+	void testOverridingServiceAfterFreeze(){
+		println "#1"
+		def gimple = new Container()
+		println "#2"
+		gimple['foo'] = { 'foo' }
+		println "#3"
+		def foo = gimple['foo']
+		println "#4"
+		shouldFail { gimple['foo'] = { 'bar' }; println "#5"; }
+	}
+	
+	@Test
+	void testRemovingServiceAfterFreeze(){
+		def gimple = new Container()
+		gimple['foo'] = { 'foo' }
+		def foo = gimple['foo']
+		gimple.remove('foo')
+		gimple['foo'] = { 'bar' }
+		assertSame 'bar', gimple['foo']
+	}
+	
+	@Test
+	void testExtendingService(){
+		def gimple = new Container()
+		gimple['foo'] = { 'foo' }
+		gimple['foo'] = gimple.extend('foo', {foo, app -> "${foo}.bar" })
+		gimple['foo'] = gimple.extend('foo', {foo, app -> "${foo}.baz" })
+		assert 'foo.bar.baz'==gimple['foo']
+	}
+	
 	@Parameter 
 	public def serviceParameter
+	
+	public def badServiceParameter = [123]
 	
 	/**
 	 * Provider for service definitions
