@@ -130,7 +130,6 @@ class ContainerTestCase extends GroovyTestCase {
 	void testShare(){
 		
 		def gimple = new Container()
-		println "###"+serviceParameter
 		System.out.flush()
 		gimple['shared_service'] = serviceParameter
 		
@@ -300,14 +299,10 @@ class ContainerTestCase extends GroovyTestCase {
 
 	@Test
 	void testOverridingServiceAfterFreeze(){
-		println "#1"
 		def gimple = new Container()
-		println "#2"
 		gimple['foo'] = { 'foo' }
-		println "#3"
 		def foo = gimple['foo']
-		println "#4"
-		shouldFail { gimple['foo'] = { 'bar' }; println "#5"; }
+		shouldFail { gimple['foo'] = { 'bar' } }
 	}
 	
 	@Test

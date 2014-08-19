@@ -3,19 +3,28 @@ package gimple
 import groovy.lang.Closure
 
 import java.util.concurrent.locks.ReadWriteLock
-
+import groovy.transform.WithWriteLock
+import groovy.transform.WithReadLock
 import com.google.common.util.concurrent.Striped
-import com.sun.xml.internal.ws.client.sei.ValueSetter.ReturnValue;
 
+/**
+ * 
+ * @author Fabiano Taioli
+ * 
+ * Ovverrided methods are thread safe. 
+ * 
+ * Not ovverrided methods are not thread safe. 
+ *
+ */
 class Container extends LinkedHashMap<String, Object> {
 
 	private def factories = [] as Set
 	private def protectedValues = [] as Set
 	private def frozen = [] as Set
-	private def raw = [:]
+	private def raw = [:]	
 
 	private final Striped<ReadWriteLock> rwLockStripes = Striped.readWriteLock(Runtime.getRuntime().availableProcessors())
-
+	
 	/**
 	 * Gets a parameter or an object.
 	 *
@@ -25,14 +34,13 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @throws \InvalidArgumentException if the identifier is not defined
 	 */
+	@WithReadLock
 	def get(String id){
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
 		try {
-			println "#1 whait for read lock "+id
 			rwLock.readLock().lock()
-			println "#2 locked read "+id
 			
-			if (!this.containsKey(id)) {
+			if (!super.containsKey(id)) {
 				throw new RuntimeException("Identifier '$id' is not defined.")
 			}
 	
@@ -47,12 +55,10 @@ class Container extends LinkedHashMap<String, Object> {
 				return super.get(id).call(this)
 			}		
 		} finally {
-			println "#2.1 Unlock read "+id
 			rwLock.readLock().unlock()
 		}
 		
 		try {
-			println "#2.2 whait for read lock "+id
 			rwLock.writeLock().lock()
 			def raw = super.get(id)
 			def val = raw(this)
@@ -61,28 +67,24 @@ class Container extends LinkedHashMap<String, Object> {
 			this.frozen << id
 			return val			
 		} finally {
-			println "#3 Unlock write "+id
 			rwLock.writeLock().unlock()
 		}
 		
 	}
 
+	
 	def getAt(String id){
-		this.get(id)
+		get(id)
 	}
-
+	
+	@WithReadLock
 	def put(String id, Object value){
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
 		try {
-			println "#4 whait for write lock "+id
-			rwLock.writeLock().lock()
-			println "#5 locked write "+id
-			
+			rwLock.writeLock().lock()			
 			assert !this.frozen.contains(id), "Cannot override frozen service '$id'."
-			super.put(id, value)
-			
+			super.put(id, value)			
 		} finally {
-			println "#6 unlock write "+id
 			rwLock.writeLock().unlock()
 		}
 	}
@@ -96,13 +98,12 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @param string $id The unique identifier for the parameter or object
 	 */
+	@WithReadLock
 	def remove(String id){
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
 		try {
-			println "#7 whait for write lock "+id
 			rwLock.writeLock().lock()
-			println "#8 locked write "+id
-			if (this.containsKey(id)) {
+			if (super.containsKey(id)) {
 				this.factories.remove(super.get(id))
 				this.protectedValues.remove(super.get(id))
 				super.remove(id)
@@ -113,7 +114,6 @@ class Container extends LinkedHashMap<String, Object> {
 			return false
 		} finally {
 			rwLock.writeLock().unlock()
-			println "#9 unlocked write "+id
 		}
 	}
 
@@ -127,6 +127,7 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @throws \InvalidArgumentException Service definition has to be a closure of an invokable object
 	 */
+	@WithReadLock
 	def factory(Closure callable) {
 
 		this.factories.add(callable)
@@ -145,6 +146,7 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @throws \InvalidArgumentException Service definition has to be a closure of an invokable object
 	 */
+	@WithReadLock
 	def protect(Closure callable){
 
 		this.protectedValues.add(callable)
@@ -161,15 +163,14 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @throws \InvalidArgumentException if the identifier is not defined
 	 */
+	@WithReadLock
 	def raw(String id) {
 
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
 		try {
-			println "#10 whait for read lock "+id
 			rwLock.readLock().lock()
-			println "#11 locked read "+id
 			
-			assert this.containsKey(id), "Identifier '$id' is not defined."
+			assert super.containsKey(id), "Identifier '$id' is not defined."
 
 			if(this.raw.containsKey(id)) {
 				return this.raw[id]
@@ -178,7 +179,6 @@ class Container extends LinkedHashMap<String, Object> {
 			super.get(id)
 		}	finally {
 			rwLock.readLock().unlock()
-			println "#12 unlocked read "+id
 		}
 	}
 
@@ -195,16 +195,15 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @throws \InvalidArgumentException if the identifier is not defined or not a service definition
 	 */
+	@WithReadLock
 	def extend(id, Closure callable){
 
 		def extended
 
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
 		try {
-			println "#13 whait for read lock "+id
 			rwLock.writeLock().lock()
-			println "#14 locked read "+id
-			assert this.containsKey(id), "Identifier '$id' is not defined."
+			assert super.containsKey(id), "Identifier '$id' is not defined."
 
 			assert super.get(id) instanceof Closure, "Identifier '$id' does not contain a closure."
 
@@ -220,19 +219,9 @@ class Container extends LinkedHashMap<String, Object> {
 			}					
 		}	finally {
 			rwLock.writeLock().unlock()
-			println "#15 unlocked read "+id
 		}
 				
 		this[id] = extended
-	}
-
-	/**
-	 * Returns all defined value names.
-	 *
-	 * @return array An array of value names
-	 */
-	def keys(){
-		keySet()
 	}
 
 	/**
@@ -243,6 +232,7 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @return static
 	 */
+	@WithReadLock
 	def register(ServiceProviderInterface provider, values = [:]){
 		
 		provider.register(this)
@@ -254,4 +244,56 @@ class Container extends LinkedHashMap<String, Object> {
 		this
 		
 	}
+	
+	@WithWriteLock
+	void clear(){ super.clear() }
+	
+	@WithWriteLock
+	boolean	containsValue(Object value){ super.containsValue(value) }
+	
+	@WithWriteLock
+	Object	clone(){ super.clone() }
+	
+	@WithWriteLock
+	Set<Map.Entry<String, Object>>	entrySet() { super.entrySet() }
+	
+	@WithWriteLock
+	boolean	isEmpty(){ super.isEmpty() }
+	
+	@WithWriteLock
+	Set<String>	keySet(){ super.keySet() }
+	
+	@WithReadLock
+	void	putAll(Map<? extends String,? extends Object> m){ 		
+		for ( e in m ) {
+			this[e.key] = e.value
+		}		
+	}
+	
+	@WithReadLock
+	boolean containsKey(String id){
+		ReadWriteLock rwLock = this.rwLockStripes.get(id)
+		try {
+			rwLock.readLock().lock()
+			super.containsKey(id)
+		} finally {
+			rwLock.readLock().unlock()
+		}
+	}
+	
+	@WithWriteLock
+	int	size(){ super.size() }
+	
+	@WithWriteLock
+	Collection<Object>	values(){ super.values() }
+	
+	@WithWriteLock
+	boolean equals(Object o){ super.equals(o) }
+	
+	@WithWriteLock
+	int hashCode(){ super.hashCode() }
+	
+	@WithWriteLock
+	String toString(){ super.toString() }	
+	
 }
