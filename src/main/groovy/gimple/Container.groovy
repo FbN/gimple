@@ -92,6 +92,10 @@ class Container extends LinkedHashMap<String, Object> {
 		get(id)
 	}
 	
+	def getProperty(String id) { get(id) }
+	
+	void setProperty(String id, Object value) { put(id, value) }
+	
 	/**
 	 * 
 	 * @param id The unique identifier for the parameter or object
@@ -120,6 +124,9 @@ class Container extends LinkedHashMap<String, Object> {
 	def putAt(String id, Object value){
 		this.put(id, value)
 	}
+	
+	def propertyMissing(String name, value) { putAt(name, value) }
+	def propertyMissing(String name) { getAt(value) }
 
 	/**
 	 * Unsets a parameter or an object.
@@ -194,8 +201,8 @@ class Container extends LinkedHashMap<String, Object> {
 			
 			assert super.containsKey(id), "Identifier '$id' is not defined."
 
-			if(this.raw.containsKey(id)) {
-				return this.raw[id]
+			if(raw.containsKey(id)) {
+				return raw[id]
 			}
 
 			super.get(id)

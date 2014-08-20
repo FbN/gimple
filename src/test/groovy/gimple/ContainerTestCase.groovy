@@ -162,7 +162,7 @@ class ContainerTestCase extends GroovyTestCase {
 		def gimple = new Container()
 		def definition = gimple.factory({ 'foo' })
 		gimple['service'] = definition
-		assertSame definition, gimple.service
+		assertSame definition, gimple.raw('service')
 	}
 	
 	@Test
