@@ -10,18 +10,21 @@ import com.google.common.util.concurrent.Striped
 /**
  * @author Fabiano Taioli
  * 
- * Simple Groovy Dependecy Injection Container
+ * <p>
+ * 	Simple Groovy Dependecy Injection Container
  * 
- * Features:
- *   - Simple: one (maybe two) class.
- *   - Modern: strong use of closure.
- *   - Thread safe efficency: powered by Guava Stripe. Tested with thread-safe.org.
- *   - Inspired by PHP Pimple: in many places a mere traduction from PHP to Groovy
- *   - Grooy: writen in grooy, usable in any java or jvm based project.
- *   - Nice api: the container is an LinkedHashMap extension.
- *   - Prototype / Singleton: define singleton o prototype scoped services or parameters.
- *   - Minimum dependecy: java - groovy - guava
- * 
+ * 	Features:
+ *   <ul>
+ *   	<li> Simple: one (maybe two) class.
+ *   	<li> Modern: strong use of closure.
+ *   	<li> Thread safe efficency: powered by Guava Stripe. Tested with thread-safe.org.
+ *   	<li> Inspired by PHP Pimple: in many places a mere traduction from PHP to Groovy
+ *   	<li> Grooy: writen in grooy, usable in any java or jvm based project.
+ *   	<li> Nice api: the container is an LinkedHashMap extension.
+ *   	<li> Prototype / Singleton: define singleton o prototype scoped services or parameters.
+ *   	<li> Minimum dependecy: java - groovy - guava
+ *   </ul>
+ *  </p>
  */
 class Container extends LinkedHashMap<String, Object> {
 
