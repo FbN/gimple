@@ -8,13 +8,20 @@ import groovy.transform.WithReadLock
 import com.google.common.util.concurrent.Striped
 
 /**
- * 
  * @author Fabiano Taioli
  * 
- * Ovverrided methods are thread safe. 
+ * Simple Groovy Dependecy Injection Container
  * 
- * Not ovverrided methods are not thread safe. 
- *
+ * Features:
+ *   - Simple: one (maybe two) class.
+ *   - Modern: strong use of closure.
+ *   - Thread safe efficency: powered by Guava Stripe. Tested with thread-safe.org.
+ *   - Inspired by PHP Pimple: in many places a mere traduction from PHP to Groovy
+ *   - Grooy: writen in grooy, usable in any java or jvm based project.
+ *   - Nice api: the container is an LinkedHashMap extension.
+ *   - Prototype / Singleton: define singleton o prototype scoped services or parameters.
+ *   - Minimum dependecy: java - groovy - guava
+ * 
  */
 class Container extends LinkedHashMap<String, Object> {
 
@@ -28,11 +35,11 @@ class Container extends LinkedHashMap<String, Object> {
 	/**
 	 * Gets a parameter or an object.
 	 *
-	 * @param string $id The unique identifier for the parameter or object
+	 * @param id The unique identifier for the parameter or object
 	 *
-	 * @return mixed The value of the parameter or an object
+	 * @return An object
 	 *
-	 * @throws \InvalidArgumentException if the identifier is not defined
+	 * @throws RuntimeException if the identifier is not defined
 	 */
 	@WithReadLock
 	def get(String id){
@@ -72,11 +79,22 @@ class Container extends LinkedHashMap<String, Object> {
 		
 	}
 
-	
+	/**
+	 * Operator [] overloading. Call the get method
+	 * 
+	 * @param id The unique identifier for the parameter or object
+	 * @return An object
+	 */
 	def getAt(String id){
 		get(id)
 	}
 	
+	/**
+	 * 
+	 * @param id The unique identifier for the parameter or object
+	 * @param value An object or the closure for object initialization
+	 * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
+	 */
 	@WithReadLock
 	def put(String id, Object value){
 		ReadWriteLock rwLock = this.rwLockStripes.get(id)
@@ -89,6 +107,13 @@ class Container extends LinkedHashMap<String, Object> {
 		}
 	}
 
+	/**
+	 * Operator []= overloading. Call the put method
+	 *
+	 * @param id The unique identifier for the parameter or object
+	 * @param value An object or closure for object instantiation
+	 * @return An object
+	 */
 	def putAt(String id, Object value){
 		this.put(id, value)
 	}
@@ -96,7 +121,8 @@ class Container extends LinkedHashMap<String, Object> {
 	/**
 	 * Unsets a parameter or an object.
 	 *
-	 * @param string $id The unique identifier for the parameter or object
+	 * @param id The unique identifier for the parameter or object
+	 * @return the previous value associated with key, or null if there was no mapping for key. (A null return can also indicate that the map previously associated null with key.)
 	 */
 	@WithReadLock
 	def remove(String id){
@@ -106,12 +132,10 @@ class Container extends LinkedHashMap<String, Object> {
 			if (super.containsKey(id)) {
 				this.factories.remove(super.get(id))
 				this.protectedValues.remove(super.get(id))
-				super.remove(id)
 				this.frozen.remove(id)
 				this.raw.remove(id)
-				return true
+				super.remove(id)
 			}
-			return false
 		} finally {
 			rwLock.writeLock().unlock()
 		}
@@ -119,13 +143,9 @@ class Container extends LinkedHashMap<String, Object> {
 
 
 	/**
-	 * Marks a callable as being a factory service.
-	 *
-	 * @param callable $callable A service definition to be used as a factory
-	 *
-	 * @return callable The passed callable
-	 *
-	 * @throws \InvalidArgumentException Service definition has to be a closure of an invokable object
+	 * Marks a callable as being a factory service
+	 * @param callable Service closure
+	 * @return  Service closure
 	 */
 	@WithReadLock
 	def factory(Closure callable) {
@@ -140,11 +160,10 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * This is useful when you want to store a callable as a parameter.
 	 *
-	 * @param callable $callable A callable to protect from being evaluated
+	 * @param callable A callable to protect from being evaluated
 	 *
 	 * @return callable The passed callable
-	 *
-	 * @throws \InvalidArgumentException Service definition has to be a closure of an invokable object
+	 * 
 	 */
 	@WithReadLock
 	def protect(Closure callable){
@@ -161,7 +180,7 @@ class Container extends LinkedHashMap<String, Object> {
 	 *
 	 * @return mixed The value of the parameter or the closure defining an object
 	 *
-	 * @throws \InvalidArgumentException if the identifier is not defined
+	 * @throws AssertionError if the identifier is not defined
 	 */
 	@WithReadLock
 	def raw(String id) {
@@ -188,12 +207,12 @@ class Container extends LinkedHashMap<String, Object> {
 	 * Useful when you want to extend an existing object definition,
 	 * without necessarily loading that object.
 	 *
-	 * @param string $id The unique identifier for the object
-	 * @param callable $callable A service definition to extend the original
+	 * @param id The unique identifier for the object
+	 * @param callable A service definition to extend the original
 	 *
-	 * @return callable The wrapped callable
+	 * @return The wrapped callable
 	 *
-	 * @throws \InvalidArgumentException if the identifier is not defined or not a service definition
+	 * @throws AssertionError if the identifier is not defined or not a service definition
 	 */
 	@WithReadLock
 	def extend(id, Closure callable){
@@ -227,10 +246,10 @@ class Container extends LinkedHashMap<String, Object> {
 	/**
 	 * Registers a service provider.
 	 *
-	 * @param ServiceProviderInterface $provider A ServiceProviderInterface instance
-	 * @param array $values An array of values that customizes the provider
+	 * @param provider A ServiceProviderInterface instance
+	 * @param values An array of values that customizes the provider
 	 *
-	 * @return static
+	 * @return this
 	 */
 	@WithReadLock
 	def register(ServiceProviderInterface provider, values = [:]){
