@@ -30,6 +30,10 @@ dependencies {
     console 'org.codehaus.groovy:groovy-groovysh:2.3.+'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
 test {
     systemProperties 'property': 'value'
     // show standard out and standard error of the test JVM(s) on the console

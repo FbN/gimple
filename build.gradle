@@ -30,6 +30,10 @@ dependencies {
     groovyDoc 'org.codehaus.groovy:groovy-ant:2.3.6'
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
 test {
     // show standard out and standard error of the test JVM(s) on the console
     testLogging.showStandardStreams = true
