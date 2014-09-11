@@ -159,4 +159,5 @@ def sessionFunction = container.raw('session')
 
 ## Authors and Contributors
 @fbn Fabiano Taioli  ftaioli@gmail.com
+@Opalo Maciek Opała
 
