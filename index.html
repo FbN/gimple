@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html>
+
   <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <meta name="description" content="Gimple : Micro, performant, and thread safe dependency injection container for jvm. Inspired by PHP Pimple. Written in Groovy. Powered by Google Guava Stripe.">
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Gimple by FbN</title>
+    <title>Gimple</title>
   </head>
 
   <body>
-    <header>
-      <div class="inner">
-        <h1>Gimple</h1>
-        <h2>Micro, performant, and thread safe dependency injection container for jvm. Inspired by PHP Pimple. Written in Groovy. Powered by Google Guava Stripe.</h2>
-        <a href="https://github.com/FbN/gimple" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/FbN/gimple">View on GitHub</a>
+
+          <h1 id="project_title">Gimple</h1>
+          <h2 id="project_tagline">Micro, performant, and thread safe dependency injection container for jvm. Inspired by PHP Pimple. Written in Groovy. Powered by Google Guava Stripe.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/FbN/gimple/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/FbN/gimple/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
 <a name="gimple" class="anchor" href="#gimple"><span class="octicon octicon-link"></span></a>Gimple</h1>
 
-<p>Gimple is a small Dependency Injection Container for Groovy, Java and more generally for JVM. Consists of just one class ( ... maybe two ). Is inspired (and in many points carbon-copied) to the <a href="http://pimple.sensiolabs.org/">PHP Pimple project</a></p>
+<p>Gimple is a small Dependency Injection Container for Groovy, Java and more generally for JVM. Consists of just one class ( ... maybe two ) and it's inspired (and in many points carbon-copied) from the <a href="http://pimple.sensiolabs.org/">PHP Pimple project</a></p>
 
 <p>Homepage: <a href="http://fbn.github.io/gimple/">http://fbn.github.io/gimple/</a></p>
 
@@ -42,20 +45,20 @@
 <li>
 <strong>Simple</strong>: one (... maybe two) class.</li>
 <li>
-<strong>Modern</strong>: strong use of closure</li>
+<strong>Modern</strong>: strong use of closures.</li>
 <li>
-<strong>Thread safty &amp; efficency</strong>: powered by <a href="https://code.google.com/p/guava-libraries/wiki/StripedExplained">Guava Stripe</a>. Tested with <a href="http://thread-safe.org/">thread-safe.org</a>.</li>
+<strong>Thread safety &amp; efficiency</strong>: powered by <a href="https://code.google.com/p/guava-libraries/wiki/StripedExplained">Guava Stripe</a>. Tested with <a href="http://thread-safe.org/">thread-safe.org</a>.</li>
 <li>
-<strong>Nice API</strong>: the container is an LinkedHashMap extension. In groovy you can use it like a Map, [:].</li>
+<strong>Nice API</strong>: the container is an <code>LinkedHashMap</code> extension. In groovy you can use it like a Map, [:].</li>
 <li>
-<strong>Prototype / Singleton</strong>: define singleton o prototype scoped services or parameters.</li>
+<strong>Prototype / Singleton</strong>: define singleton or prototype scoped services or parameters.</li>
 </ul><h2>
 <a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>Why!?</h2>
 
-<p>Java, and more generally JVM, already got many dependency injection containers ( spring framework, google guice, picocontainer )
+<p>Java, and more generally JVM, already got many dependency injection containers (spring framework, google guice, picocontainer)
 but all of them are heavy libraries composed of dozens of classes. </p>
 
-<p>This is a one class!</p>
+<p>It's just a single class!</p>
 
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
@@ -66,13 +69,14 @@ but all of them are heavy libraries composed of dozens of classes. </p>
 <li>Maven repository: <a href="https://github.com/FbN/mvn/raw/master/">https://github.com/FbN/mvn/raw/master/</a>
 </li>
 <li>Maven artifact: com.github.gimple Gimple 0.1.2</li>
-</ul><p>If you use gradle simply:</p>
+</ul><p>If you use gradle simply add the following lines to <em>build.gradle</em> file:</p>
 
 <div class="highlight highlight-groovy"><pre><span class="n">repositories</span> <span class="o">{</span>
     <span class="n">maven</span> <span class="o">{</span>
         <span class="n">url</span> <span class="s1">'https://github.com/FbN/mvn/raw/master/'</span>
     <span class="o">}</span>
 <span class="o">}</span> 
+
 <span class="n">dependencies</span> <span class="o">{</span>
     <span class="n">compile</span> <span class="s1">'com.github.gimple:Gimple:0.1.2'</span>
 <span class="o">}</span>
@@ -91,15 +95,20 @@ but all of them are heavy libraries composed of dozens of classes. </p>
 <a name="defining-services" class="anchor" href="#defining-services"><span class="octicon octicon-link"></span></a>Defining Services</h3>
 
 <p>A service is an object that does something as part of a larger system. 
-Examples of services: a database connection, a templating engine, or a mailer. 
-Almost any global object can be a service.
-Services are defined by closure that return an instance of an object:</p>
+Examples of services are: </p>
 
-<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<ul>
+<li>a database connection</li>
+<li>a templating engine</li>
+<li>a mailer</li>
+</ul><p>Almost any global object can be a service.
+Services are defined by a closure that returns an instance of an object:</p>
+
+<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="nf">SessionStorage</span><span class="o">(</span><span class="s1">'SESSION_ID'</span><span class="o">)</span>
 <span class="o">}</span>
 
-<span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="nf">Session</span><span class="o">(</span><span class="n">c</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">])</span>
 <span class="o">}</span>
 </pre></div>
@@ -117,14 +126,14 @@ Services are defined by closure that return an instance of an object:</p>
 <a name="defining-factory-services" class="anchor" href="#defining-factory-services"><span class="octicon octicon-link"></span></a>Defining Factory Services</h3>
 
 <p>By default, each time you get a service, Gimple returns the same instance of it. 
-If you want a different instance to be returned for all calls, wrap your closure with the factory() method</p>
+If you want a different instance to be returned for all calls, wrap your closure with the <code>factory()</code> method</p>
 
-<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="na">factory</span><span class="o">(</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="na">factory</span><span class="o">(</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="nf">Session</span><span class="o">(</span><span class="n">c</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">])</span>
-    <span class="o">})</span>
+<span class="o">})</span>
 </pre></div>
 
-<p>Now, each call to container['session'] returns a new instance of the session.</p>
+<p>Now, each call to <code>container['session']</code> returns a new instance of the session.</p>
 
 <h3>
 <a name="defining-parameters" class="anchor" href="#defining-parameters"><span class="octicon octicon-link"></span></a>Defining Parameters</h3>
@@ -135,11 +144,11 @@ If you want a different instance to be returned for all calls, wrap your closure
 <span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorageClass'</span><span class="o">]</span> <span class="o">=</span> <span class="s1">'SessionStorage'</span>
 </pre></div>
 
-<p>If not is a closure is a parameter.</p>
+<p>If not a closure it is a parameter.</p>
 
-<p>If you change the sessionStorage service definition like below:</p>
+<p>If you change the <code>sessionStorage</code> service definition like below:</p>
 
-<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="s2">"${c['sessionStorageClass']}"</span><span class="o">(</span><span class="n">c</span><span class="o">[</span><span class="s1">'cookieName'</span><span class="o">])</span>
 <span class="o">}</span>
 </pre></div>
@@ -147,7 +156,7 @@ If you want a different instance to be returned for all calls, wrap your closure
 <h3>
 <a name="protecting-parameters" class="anchor" href="#protecting-parameters"><span class="octicon octicon-link"></span></a>Protecting Parameters</h3>
 
-<p>Because Gimple sees clsure as service definitions, you need to wrap closure with the protect() method to store them as parameters:</p>
+<p>Because Gimple sees closures as a service definitions, you need to wrap closure with the <code>protect()</code> method to store them as parameters:</p>
 
 <div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'randomFunc'</span><span class="o">]</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="na">protect</span><span class="o">({</span> <span class="k">new</span> <span class="n">Random</span><span class="o">().</span><span class="na">nextInt</span><span class="o">()</span> <span class="o">})</span>
 </pre></div>
@@ -157,13 +166,13 @@ If you want a different instance to be returned for all calls, wrap your closure
 
 <p>You can replace a service simple reassigning a new value to id (the service must not be already used).
 In some cases you may want to modify a service definition after it has been defined without replacing it. You can see it as a filter applied after the original service.
-You can use the extend() method to define additional code to be run on your service just after it is created:</p>
+You can use the <code>extend()</code> method to define additional code to be run on your service just after it is created:</p>
 
-<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="s2">"${c['sessionStorageClass']}"</span><span class="o">(</span><span class="n">c</span><span class="o">[</span><span class="s1">'cookieName'</span><span class="o">])</span>
 <span class="o">};</span>
 
-<span class="n">container</span><span class="o">-&gt;</span><span class="n">extend</span><span class="o">(</span><span class="s1">'sessionStorage'</span><span class="o">,</span> <span class="o">{</span><span class="n">storage</span><span class="o">,</span> <span class="n">c</span><span class="o">-&gt;</span>
+<span class="n">container</span><span class="o">.</span><span class="na">extend</span><span class="o">(</span><span class="s1">'sessionStorage'</span><span class="o">,</span> <span class="o">{</span><span class="n">storage</span><span class="o">,</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="o">...</span>
     <span class="k">do</span> <span class="n">anything</span> <span class="n">with</span> <span class="n">storage</span> <span class="n">and</span> <span class="n">c</span>
     <span class="o">...</span>
@@ -177,12 +186,10 @@ You can use the extend() method to define additional code to be run on your serv
 <h3>
 <a name="extending-a-container" class="anchor" href="#extending-a-container"><span class="octicon octicon-link"></span></a>Extending a Container</h3>
 
-<p>If you use the same libraries over and over, you might want to reuse some services from one project to the next one; package your services into a provider by implementing gimple.ServiceProviderInterface:</p>
+<p>If you use the same libraries over and over, you might want to reuse some services from one project in another one. Package your services into a provider by implementing <code>gimple.ServiceProviderInterface</code>:</p>
 
-<div class="highlight highlight-groovy"><pre><span class="kd">class</span> <span class="nc">FooProvider</span> <span class="kd">implements</span> <span class="n">gimple</span><span class="o">.</span><span class="na">ServiceProviderInterface</span>
-<span class="o">{</span>
-    <span class="kt">def</span> <span class="nf">register</span><span class="o">(</span><span class="n">Container</span> <span class="n">gimple</span><span class="o">)</span>
-    <span class="o">{</span>
+<div class="highlight highlight-groovy"><pre><span class="kd">class</span> <span class="nc">FooProvider</span> <span class="kd">implements</span> <span class="n">gimple</span><span class="o">.</span><span class="na">ServiceProviderInterface</span> <span class="o">{</span>
+    <span class="kt">def</span> <span class="nf">register</span><span class="o">(</span><span class="n">Container</span> <span class="n">gimple</span><span class="o">)</span> <span class="o">{</span>
         <span class="c1">// register some services and parameters</span>
         <span class="c1">// on gimple</span>
     <span class="o">}</span>
@@ -199,7 +206,7 @@ You can use the extend() method to define additional code to be run on your serv
 
 <p>When you access an object, Gimple automatically calls the closure that you defined, which creates the service object for you. If you want to get raw access to the closure, you can use the raw() method:</p>
 
-<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span><span class="o">-&gt;</span>
+<div class="highlight highlight-groovy"><pre><span class="n">container</span><span class="o">[</span><span class="s1">'session'</span><span class="o">]</span> <span class="o">=</span> <span class="o">{</span> <span class="n">c</span> <span class="o">-&gt;</span>
     <span class="k">new</span> <span class="nf">Session</span><span class="o">(</span><span class="n">c</span><span class="o">[</span><span class="s1">'sessionStorage'</span><span class="o">])</span>
 <span class="o">};</span>
 
@@ -209,27 +216,21 @@ You can use the extend() method to define additional code to be run on your serv
 <h2>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h2>
 
-<p><a href="https://github.com/fbn" class="user-mention">@fbn</a> Fabiano Taioli  <a href="mailto:ftaioli@gmail.com">ftaioli@gmail.com</a></p>
-        </section>
+<p><a href="https://github.com/FbN">Fabiano Taioli</a>  /  <a href="mailto:ftaioli@gmail.com">ftaioli@gmail.com</a></p>
 
-        <aside id="sidebar">
-          <a href="https://github.com/FbN/gimple/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/FbN/gimple/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/FbN/gimple"></a> is maintained by <a href="https://github.com/FbN">FbN</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+<p><a href="https://github.com/Opalo">Maciek Opała</a></p>
+      </section>
     </div>
 
-            <script type="text/javascript">
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Gimple maintained by <a href="https://github.com/FbN">FbN</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -239,6 +240,7 @@ You can use the extend() method to define additional code to be run on your serv
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
